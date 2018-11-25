@@ -64,10 +64,26 @@
 		var auswahlAenderung = true;
 		var festerWertebereich = true;
 
+		
+		// GeoJSON zu JSON
+		var namenMap = {};
+		namenMap['Cronenberg'] = 'Cronenberg-Mitte';
+		namenMap['Elberfeld'] = 'Elberfeld-Mitte';
+		namenMap['Fr.-Engels-Allee'] = 'Friedrich-Engels-Allee';
+		namenMap['Industriestr.'] = 'Industriestr';
+		namenMap['Jesinghauser Str.'] = 'Jesinghauser Str';
+		namenMap['Rehsiepen'] = 'Rehsiepen';
+		namenMap['Ronsdorf-MitteNord'] = 'Ronsdorf-Mitte/Nord';
+		namenMap['Schenkstr.'] = 'Schenkstr';
+		
+		var geoJsonToJsonName = function (name) {
+			return namenMap[name] || name;
+		};		
+		
 		var ebenenStil = function (feature) {
 			var fillOpacityToUse = 0.3;
 			var aktuellGewaehlerOrtsteil = gewaehlterOrtsteil()
-				if (feature.properties.NAME == aktuellGewaehlerOrtsteil) {
+				if (geoJsonToJsonName(feature.properties.NAME) == aktuellGewaehlerOrtsteil) {
 					fillOpacityToUse = 1.0;
 				}
 				return {
@@ -219,7 +235,6 @@
 						return [x[0] + y[0] / arrToUse.length, x[1] + y[1] / arrToUse.length]
 					}, [0, 0])
 				};
-				//$.getJSON("https://statistik.leipzig.de/opendata/api/kdvalues?kategorie_nr=2&rubrik_nr=1&periode=y&format=json&callback=?",
 				$.getJSON("einwohner.json", function (einwohnerDaten) {
 					if (alleOrtsteilNamen.length == 0) {
 						//alleOrtsteilNamen = ["alle"];
@@ -234,7 +249,7 @@
 					geojsonEbene.on('click', function (ereignis) {
 						if (karte) {
 							var eigenschaften = ereignis.layer.feature.properties
-								var ortsteilName = eigenschaften.NAME
+								var ortsteilName = geoJsonToJsonName(eigenschaften.NAME);
 								if (gemerkterZuletztGewaehlterOrtsteil == ortsteilName) {
 									hebeAuswahlHervor(ereignis, alleOrtsteilNamen[0], einwohnerDaten);
 								} else {

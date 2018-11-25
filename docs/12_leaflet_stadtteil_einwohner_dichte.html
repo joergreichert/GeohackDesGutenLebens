@@ -60,6 +60,21 @@
 
 		var ausgewaehltesJahr = 2017;
 
+		// GeoJSON zu JSON
+		var namenMap = {};
+		namenMap['Cronenberg'] = 'Cronenberg-Mitte';
+		namenMap['Elberfeld'] = 'Elberfeld-Mitte';
+		namenMap['Fr.-Engels-Allee'] = 'Friedrich-Engels-Allee';
+		namenMap['Industriestr.'] = 'Industriestr';
+		namenMap['Jesinghauser Str.'] = 'Jesinghauser Str';
+		namenMap['Rehsiepen'] = 'Rehsiepen';
+		namenMap['Ronsdorf-MitteNord'] = 'Ronsdorf-Mitte/Nord';
+		namenMap['Schenkstr.'] = 'Schenkstr';
+		
+		var geoJsonToJsonName = function (name) {
+			return namenMap[name] || name;
+		};
+		
 		var reagiereAufJahrAuswahl = function () {
 			ausgewaehltesJahr = parseInt(document.getElementById("jahrAuswahl").value);
 			document.getElementById("ausgewaehltesJahr").innerHTML = ausgewaehltesJahr;
@@ -90,7 +105,7 @@
 				};
 
 				var ebenenStil = function (feature) {
-					var ortsteilName = feature.properties.NAME;
+					var ortsteilName = geoJsonToJsonName(feature.properties.NAME);
 					return {
 						fillColor: stufenFarbe(wertFuerOrtsteilUndJahr(ortsteilName, ausgewaehltesJahr)),
 						weight: 2,
@@ -126,7 +141,7 @@
 						var hoverKoordinaten = [centroid[1], centroid[0]];
 						if (karte) {
 							var eigenschaften = ereignis.layer.feature.properties;
-							var ortsteilName = eigenschaften.NAME;
+							var ortsteilName = geoJsonToJsonName(eigenschaften.NAME);
 							var einwohnerDichte = wertFuerOrtsteilUndJahr(ortsteilName, ausgewaehltesJahr);
 							var inhalt = "<h3>" + ortsteilName + " " + ausgewaehltesJahr + "</h3>";
 							inhalt += "Einwohner pro 1km&sup2;: " + einwohnerDichte;
@@ -185,7 +200,7 @@
 							von + (bis ? ' &ndash; ' + bis : '+'));
 					}
 
-					div.innerHTML = 'Einwohnerdichte<br /><br />'
+					div.innerHTML = 'Einwohnerdichte pro 1km&sup2;<br /><br />'
 						 + bezeichner.join('<br>');
 					return div;
 				};
